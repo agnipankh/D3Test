@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3 Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        .chart-container {
+            width: 600px;
+            margin: 50px auto;
+        }
+        .bar {
+            fill: steelblue;
+        }
+        .bar:hover {
+            fill: brown;
+        }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <h2>Sample D3 Chart</h2>
+        <div id="chart"></div>
+    </div>
+
+    <script>
+        // Sample data
+        const data = [
+            {name: 'A', value: 10},
+            {name: 'B', value: 20},
+            {name: 'C', value: 15},
+            {name: 'D', value: 25},
+            {name: 'E', value: 18}
+        ];
+
+        // Set up the chart dimensions
+        const width = 600;
+        const height = 400;
+        const margin = {top: 20, right: 20, bottom: 30, left: 40};
+
+        // Create SVG container
+        const svg = d3.select('#chart')
+            .append('svg')
+            .attr('width', width)
+            .attr('height', height);
+
+        // Create scales
+        const x = d3.scaleBand()
+            .domain(data.map(d => d.name))
+            .range([margin.left, width - margin.right])
+            .padding(0.1);
+
+        const y = d3.scaleLinear()
+            .domain([0, d3.max(data, d => d.value)])
+            .nice()
+            .range([height - margin.bottom, margin.top]);
+
+        // Add bars
+        svg.selectAll('rect')
+            .data(data)
+            .join('rect')
+            .attr('class', 'bar')
+            .attr('x', d => x(d.name))
+            .attr('y', d => y(d.value))
+            .attr('width', x.bandwidth())
+            .attr('height', d => y(0) - y(d.value));
+
+        // Add the x-axis
+        svg.append('g')
+            .attr('transform', `translate(0,${height - margin.bottom})`)
+            .call(d3.axisBottom(x));
+
+        // Add the y-axis
+        svg.append('g')
+            .attr('transform', `translate(${margin.left},0)`)
+            .call(d3.axisLeft(y));
+    </script>
+</body>
+</html>
